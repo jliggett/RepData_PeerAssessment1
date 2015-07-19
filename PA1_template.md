@@ -140,8 +140,10 @@ activity$day = ifelse(as.POSIXlt(as.Date(activity$date))$wday%%6 ==
     0, "weekend", "weekday")
 ```
 #### For Sunday and Saturday : weekend, Other days : weekday
-activity$day = factor(activity$day, levels = c("weekday", "weekend"))
 
+```r
+activity$day = factor(activity$day, levels = c("weekday", "weekend"))
+```
 ### Make a panel plot containing a time series plot of the 5-minute interval and the average number of steps taken, averaged across all weekday days or weekend days
 
 ```r
@@ -151,4 +153,4 @@ xyplot(steps ~ interval | factor(day), data = stepsInt2, aspect = 1/2,
     type = "l")
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15-1.png) 
+![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16-1.png) 
