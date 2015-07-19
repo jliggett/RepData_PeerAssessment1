@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Loading and preprocessing the data</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h1>Loading and preprocessing the data</h1>
+
+<h2>Load the data</h2>
+
+<p>data &lt;- read.csv(unzip(&ldquo;activity.zip&rdquo;)</p>
+
+<h2>Transform the data for analysis</h2>
+
+<p>totalSteps &lt;- aggregate(steps ~ date, data = data, sum, na.rm = TRUE)</p>
+
+<h1>What is mean total number of steps taken per day?</h1>
+
+<h2>Create a histogram for the total number of steps each day</h2>
+
+<p>hist(totalSteps$steps)</p>
+
+<h2>Mean</h2>
+
+<p>mean(totalSteps$steps)</p>
+
+<h2>Median</h2>
+
+<p>median(totalSteps$steps)</p>
+
+<h1>What is the average daily activity pattern?</h1>
+
+<h2>Make a time series plot (i.e. type = &ldquo;l&rdquo;) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)</h2>
+
+<p>stepsInt &lt;- aggregate(steps ~ interval, data = data, mean, na.rm = TRUE)
+plot(steps ~ interval, data = stepsInt, type = &ldquo;l&rdquo;)</p>
+
+<h2>Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?</h2>
+
+<p>stepsInt[which.max(stepsInt$steps), ]$interval</p>
+
+<h1>Imputing missing values</h1>
+
+<h2>Calculate the total number of missing valeus</h2>
+
+<p>sum(is.na(activity$steps))</p>
+
+<h2>Devise a strategy for filling in all of the missing values in the dataset</h2>
+
+<h3>Use the mean for 5-minute interval</h3>
+
+<p>interval2steps &lt;- function(interval) {
+    stepsInt[stepsInt$interval == interval, ]$steps
+}</p>
+
+<h2>Fill in the missing data</h2>
+
+<p>activity &lt;- data
+count = 0
+for (i in 1:nrow(activity)) {
+    if (is.na(activity[i, ]$steps)) {
+        activity[i, ]$steps &lt;- interval2steps(activity[i, ]$interval)
+        count = count + 1
+    }
+}
+cat(&ldquo;Total &rdquo;, count, &ldquo;NA values were filled.\n\r&rdquo;)</p>
+
+<h1>Make a histogram of the total number of steps taken each day</h1>
+
+<p>total &lt;- aggregate(steps ~ date, data = activity, sum)
+hist(total$steps)</p>
+
+<h2>Calculate and report the mean and median total number of steps taken per day</h2>
+
+<h3>Mean</h3>
+
+<p>mean(total$steps)</p>
+
+<h3>Median</h3>
+
+<p>median(total$steps)</p>
+
+<h2>Do these values differ from the estimates from the first part of the assignment?</h2>
+
+<h3>The mean values do not differ, the median value has changed</h3>
+
+<h2>Are there differences in activity patterns between weekdays and weekends?</h2>
+
+<h3>Create a new factor variable in the dataset with two levels - “weekday” and “weekend” indicating whether a given date is a weekday or weekend day</h3>
+
+<p>activity$day = ifelse(as.POSIXlt(as.Date(activity$date))$wday%%6 == 
+    0, &ldquo;weekend&rdquo;, &ldquo;weekday&rdquo;)</p>
+
+<h4>For Sunday and Saturday : weekend, Other days : weekday</h4>
+
+<p>activity$day = factor(activity$day, levels = c(&ldquo;weekday&rdquo;, &ldquo;weekend&rdquo;))</p>
+
+<h3>Make a panel plot containing a time series plot of the 5-minute interval and the average number of steps taken, averaged across all weekday days or weekend days</h3>
+
+<p>stepsInt2 = aggregate(steps ~ interval + day, activity, mean)
+library(lattice)
+xyplot(steps ~ interval | factor(day), data = stepsInt2, aspect = &frac12;, 
+    type = &ldquo;l&rdquo;)</p>
+
+</body>
+
+</html>
